@@ -71,8 +71,7 @@ pragma solidity >=0.7.0 <0.9.0;
     }
 
 
-    function initiatePayout(uint _id, bool _completed) public {
-        require(msg.sender == Projects[_id].client, "You are not the client.");
+    function initiatePayout(uint _id, bool _completed) public restricted(_id) {
         Projects[_id].completed = _completed;
         Projects[_id].dateCompleted = block.timestamp;
         address payable payee = payable(Projects[_id].recipient);
@@ -80,17 +79,21 @@ pragma solidity >=0.7.0 <0.9.0;
     }
 
 
-    function designateRecipient(uint _id, address _recipient) public {
-        require(msg.sender == Projects[_id].client, "You are not the client.");
+    function designateRecipient(uint _id, address _recipient)  public restricted(_id) {
         Projects[_id].recipient = _recipient;
     }
 
 
-    function cancelContract(uint _id) public {
-        require(msg.sender == Projects[_id].client, "You are not the client.");
+    function cancelContract(uint _id) public restricted(_id) {
         Projects[_id].active = false;
         address payable client = payable(Projects[_id].client);
         client.transfer(Projects[_id].funding);
+    }
+
+    //Modifiers
+    modifier restricted(uint _id) {
+        require(msg.sender == Projects[_id].client, "You are not the client.");
+        _;
     }
 
 
