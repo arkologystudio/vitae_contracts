@@ -20,6 +20,8 @@ pragma solidity >=0.7.0 <0.9.0;
         uint16 [] skills;
         uint8 experience;
         uint funding;
+        uint dateInitiated;
+        uint dateCompleted;
 
         address client;
         address recipient;
@@ -59,6 +61,8 @@ pragma solidity >=0.7.0 <0.9.0;
 
         Projects[_id].client = msg.sender;
         Projects[_id].active = true;
+        Projects[_id].dateInitiated = block.timestamp;
+
 
     }
 
@@ -70,6 +74,7 @@ pragma solidity >=0.7.0 <0.9.0;
     function initiatePayout(uint _id, bool _completed) public {
         require(msg.sender == Projects[_id].client, "You are not the client.");
         Projects[_id].completed = _completed;
+        Projects[_id].dateCompleted = block.timestamp;
         address payable payee = payable(Projects[_id].recipient);
         payee.transfer(Projects[_id].funding);
     }
