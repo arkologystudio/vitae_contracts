@@ -90,6 +90,11 @@ pragma solidity >=0.7.0 <0.9.0;
         client.transfer(Projects[_id].funding);
     }
 
+    
+    function viewProjectBalance(uint _id) public view returns  (uint) {
+        return Projects[_id].funding;
+    }
+
     //Modifiers
     modifier restricted(uint _id) {
         require(msg.sender == Projects[_id].client, "You are not the client.");
