@@ -27,7 +27,6 @@ pragma solidity >=0.7.0 <0.9.0;
         address recipient;
 
         bool active;
-        bool completed;
         
     }
     
@@ -72,8 +71,9 @@ pragma solidity >=0.7.0 <0.9.0;
 
 
     function initiatePayout(uint _id, bool _completed) public restricted(_id) {
-        Projects[_id].completed = _completed;
-        Projects[_id].dateCompleted = block.timestamp;
+        if (_completed){
+            Projects[_id].dateCompleted = block.timestamp;
+        }
         address payable payee = payable(Projects[_id].recipient);
         payee.transfer(Projects[_id].funding);
     }
@@ -90,10 +90,6 @@ pragma solidity >=0.7.0 <0.9.0;
         client.transfer(Projects[_id].funding);
     }
 
-    
-    function viewProjectBalance(uint _id) public view returns  (uint) {
-        return Projects[_id].funding;
-    }
 
     //Modifiers
     modifier restricted(uint _id) {
@@ -102,7 +98,7 @@ pragma solidity >=0.7.0 <0.9.0;
     }
 
 
-    // VIEW
+    // PROJECT VIEW
 
     function fetchClientProjects(address _client) public view returns (uint[] memory) {
         return ClientProjects[_client];
@@ -110,6 +106,14 @@ pragma solidity >=0.7.0 <0.9.0;
     function fetchRecipientProjects(address _recipient) public view returns (uint[] memory) {
         return RecipientProjects[_recipient];
     }
+    function viewProjectBalance(uint _id) public view returns  (uint) {
+        return Projects[_id].funding;
+    }
 
+    // CONTRACT VIEW
+
+    function viewBalance() public view returns(uint) {
+        return address(this).balance;
+    }
 
  }
